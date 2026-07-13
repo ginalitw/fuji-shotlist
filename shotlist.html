@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>富搖拍攝清單 2026</title>
+<style>
+  :root{
+    --bg:#111318; --card:#1b1e26; --line:#2a2e3a;
+    --text:#e8e8ea; --dim:#9a9fad; --accent:#7ec8a9; --warn:#e8b04b;
+    --ace:#5aa7e8; --flow:#c58ae0; --go:#e8a05a; --hand:#8a94a8;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif; padding-bottom:80px;}
+  header{position:sticky; top:0; background:rgba(17,19,24,.96); backdrop-filter:blur(6px);
+    padding:14px 16px 10px; border-bottom:1px solid var(--line); z-index:10;}
+  h1{font-size:18px; margin:0 0 6px;}
+  .total{font-size:13px; color:var(--dim);}
+  .bar{height:6px; background:var(--line); border-radius:3px; margin-top:8px; overflow:hidden;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0%; transition:width .3s;}
+  section{margin:14px 12px;}
+  .sec-head{display:flex; justify-content:space-between; align-items:baseline;
+    padding:4px 4px 8px; cursor:pointer; user-select:none;}
+  .sec-head h2{font-size:16px; margin:0; color:var(--accent);}
+  .sec-head .cnt{font-size:12px; color:var(--dim);}
+  .note{font-size:12px; color:var(--warn); padding:0 4px 8px; line-height:1.5;}
+  ul{list-style:none; margin:0; padding:0; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  li{border-bottom:1px solid var(--line);}
+  li:last-child{border-bottom:none;}
+  label{display:flex; align-items:flex-start; gap:10px; padding:12px 12px; cursor:pointer;}
+  input[type=checkbox]{width:22px; height:22px; margin:1px 0 0; accent-color:var(--accent); flex:none;}
+  li.done .txt{color:var(--dim); text-decoration:line-through;}
+  .txt{font-size:15px; line-height:1.45;}
+  .sub{display:block; font-size:12px; color:var(--dim); margin-top:2px;}
+  .tag{display:inline-block; font-size:11px; padding:1px 7px; border-radius:9px;
+    margin-left:6px; vertical-align:1px; color:#111; font-weight:600;}
+  .tAce{background:var(--ace);} .tFlow{background:var(--flow);}
+  .tGo{background:var(--go);} .tHand{background:var(--hand);}
+  .collapsed ul,.collapsed .note{display:none;}
+  footer{position:fixed; bottom:0; left:0; right:0; display:flex; gap:10px;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:rgba(17,19,24,.96); border-top:1px solid var(--line);}
+  button{flex:1; padding:10px; font-size:14px; border-radius:10px; border:1px solid var(--line);
+    background:var(--card); color:var(--text);}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 富搖拍攝清單 2026</h1>
+  <div class="total"><span id="doneN">0</span> / <span id="allN">0</span> 顆完成</div>
+  <div class="bar"><i id="totalBar"></i></div>
+</header>
+
+<div id="app"></div>
+
+<footer>
+  <button onclick="toggleAll()">全部收合/展開</button>
+  <button onclick="if(confirm('確定清空所有勾選？')){localStorage.clear();location.reload()}">重設</button>
+</footer>
+
+<script>
+const A='<span class="tag tAce">Ace</span>', F='<span class="tag tFlow">Flow</span>',
+      G='<span class="tag tGo">GO 3S</span>', H='<span class="tag tHand">手機</span>';
+
+const DATA=[
+{t:"✈️ 出發前（台灣・7/21-22 試拍）",n:"回放檢查穩不穩，有問題還來得及調",items:[
+ ["Ace 夾肩帶走路 POV 試拍一段"+A,"走 1 分鐘，回放看晃不晃"],
+ ["Flow 緩推空景試拍一段"+F,"練慢，越慢越貴氣"],
+ ["行李打包隨手拍"+H,"段落1備用"],
+]},
+{t:"🛬 抵達日｜機場→上野 九顆蒙太奇",n:"方向鎖定：所有交通移動一律往右。當晚剪映練剪 45 秒版！",items:[
+ ["① 機艙窗外雲層（靜 3秒）"+H,""],
+ ["② 降落瞬間地面逼近（2秒）"+H,"貼窗防反光"],
+ ["③ 入境章蓋下／護照收起 特寫"+H,"動作拍完整"],
+ ["④ 行李箱滑到面前、手提起"+H,"「提起」瞬間是剪點"],
+ ["⑤ Skyliner 進站（車頭由左往右）"+F,"⚠️ 方向往右"],
+ ["⑥ 車窗風景掠過（連拍30秒）"+H,"同方向往右"],
+ ["⑦ 上野站閘門拍卡 特寫"+H,"「嗶」是剪點"],
+ ["⑧ 出站人潮・阿美橫町街景 中景"+F,""],
+ ["⑨ 阿美橫町大招牌（靜 3秒定住）"+F,"「到了」蓋章"],
+]},
+{t:"🌄 7/23（四）早晨黃金檔＋前夜祭",n:"等團友時段＝Flow 專場。全片氣質擔當，拍好拍滿",items:[
+ ["玄關 motif：穿鞋特寫→全身緩搖→出門背影"+F,"三顆一組＋直式版，每天同機位"],
+ ["民宿周邊山嵐/晨景 緩推 ×2-3顆"+F,""],
+ ["民宿→會場完整走一遍 橫移/跟拍"+F,"Day0 鋪陳＋S1 素材"],
+ ["苗場街道・商店開店前的安靜"+F,"之後人潮=對比組"],
+ ["空的接駁站牌／入場動線"+F,"記機位，隔天拍爆滿版"],
+ ["縮時一顆：雲霧或街道從無人到有人"+F,""],
+ ["早晨鳥叫・山的安靜 收音 1 分鐘"+H,""],
+ ["傍晚人潮開始移動"+F,"閘門外"],
+ ["前夜祭會場氣氛"+A,"抽選會/煙火時間記下來"],
+ ["煙火 或「聽得到煙火聲的民宿窗戶」"+A,"抉擇①結果決定拍哪顆"],
+ ["夜燈串/帳篷燈 靜景 3秒"+F,"過場用"],
+ ["🎙 語音日記 1-2 分鐘＋備份充電",""],
+]},
+{t:"🎸 7/24（五）Day 1｜衝堂抉擇",n:"核心段落，素材寧多勿少。開演前5分鐘舉機等前奏！",items:[
+ ["玄關 motif 三顆＋直式"+F,"出門前"],
+ ["手機看時刻表・手指在 A/B 之間猶豫"+H,"設鬧鐘提醒，最容易忘"],
+ ["看時刻表的背影/側面（請團友拍）"+A,""],
+ ["GREEN→WHITE 步行 POV ×3段（各30秒）"+A,"夾肩帶，起終點拍地標"],
+ ["選中舞台：開演瞬間歡呼"+A,"前奏一下就錄"],
+ ["人物入大景：背影對舞台"+A,"請團友拍"],
+ ["被棄舞台「路過感」：遠遠舞台聲＋腳步"+A,"沒對照就沒抉擇感，務必拍"],
+ ["森林小徑光影 靜景 3秒",""],
+ ["舞台環境音 1 分鐘"+A,""],
+ ["🎙 語音日記＋備份充電","選了誰、後不後悔"],
+]},
+{t:"🚌 7/25（六）Day 2｜Go Around 出走",n:"玄關 motif 自動變出走裝。好天氣加碼 Sky Grass",items:[
+ ["玄關 motif 三顆＋直式"+F,"出門前"],
+ ["上車刷票 特寫"+H,""],
+ ["站牌等車 靜景"+F,""],
+ ["車窗風景 連續30秒"+H,"貼玻璃防反光"],
+ ["車內空景一顆（前往後帶）"+H,""],
+ ["引擎＋窗外 收音 1 分鐘"+H,"「離開」的聲音"],
+ ["目的地空景（畫面靜・內容微動）"+F,"見什麼拍什麼"],
+ ["目的地 人物入大景一顆"+F,"請團友拍"],
+ ["（好天）Dragondola 車廂窗外森林掠過"+H,"去回各一次"],
+ ["（好天）Sky Grass 山頂草原全景"+H,""],
+ ["（好天）俯瞰會場大遠景 ⭐結尾候選"+H,"多拍幾顆不同焦段"],
+ ["（好天）背影看山谷（團友拍）＋山頂收音1分"+H,""],
+ ["纜車票價/巴士時間 記下來","數字佐證"],
+ ["🎙 語音日記＋備份充電","出走值不值得"],
+]},
+{t:"🌅 7/26（日）Day 3｜收尾抉擇",n:"壓軸 or 早撤，兩案都先卡好機位",items:[
+ ["玄關 motif 三顆＋直式"+F,"出門前"],
+ ["傍晚 GREEN 大景・夕陽旗海"+A,"最後一天的光最捨不得"],
+ ["壓軸演出氣氛 或 提早撤的空路"+A,"抉擇④結果決定"],
+ ["散場人流 縮時（找高處）"+A,""],
+ ["人物入大景一顆"+A,""],
+ ["🎙 語音日記＋備份充電","四天總結的心情"],
+]},
+{t:"👋 7/27（一）撤收日",n:"曲終人散＝S6＋主片結尾素材",items:[
+ ["空掉的營地/會場"+F,"閘門外"],
+ ["最後一班接駁・站牌"+F,""],
+ ["回程車窗"+H,"結尾候選之二"],
+ ["🎙 語音日記：總結版",""],
+]},
+{t:"⚡ 隨時觸發（看到就拍，不分日期）",n:"霧不等人、雨不等人。含四天內要收齊的通用素材",items:[
+ ["起霧/山嵐→放下手邊的事先拍"+F,"閘門內用 Ace"],
+ ["雨：雨衣人海・踩泥特寫・雨打屋簷"+A,"Ace 防水主場"],
+ ["雨聲收音 1 分鐘"+A,"S4 短片靈魂"],
+ ["雨後水漥倒影（舞台燈/人影）"+A,"看到就蹲"],
+ ["七大舞台全景 白天＋夜晚"+A,"GREEN/WHITE/RED/HEAVEN/ECHO/AVALON/PYRAMID"],
+ ["清晨無人 GREEN（＋同機位下午爆滿版）"+A,"最強對比組，記住站位"],
+ ["溪流：水面特寫＋帶環境中景","富搖招牌"],
+ ["往 HEAVEN 路上森林小徑・吊橋",""],
+ ["木棧道晨光（無人時）",""],
+ ["換手環過程 特寫"+G,"入場當下"],
+ ["啤酒/美食「拿到第一秒」"+G,"GO 3S 胸前雙手自由"],
+ ["排隊人龍（接駁/美食/廁所）"+G,""],
+ ["開演歡呼：聽到前奏就舉機"+A,"別等"],
+ ["人物入大景：每天至少 1 顆","背影＋大景＝妳的存在方式"],
+ ["每個場景順手一顆直式","短片 S1-S7 原料"],
+]},
+];
+
+const app=document.getElementById('app');
+let total=0;
+DATA.forEach((sec,si)=>{
+  const s=document.createElement('section'); s.id='sec'+si;
+  let lis='';
+  sec.items.forEach((it,ii)=>{
+    const key='s'+si+'i'+ii; total++;
+    const done=localStorage.getItem(key)==='1';
+    lis+=`<li class="${done?'done':''}"><label>
+      <input type="checkbox" data-k="${key}" ${done?'checked':''}>
+      <span class="txt">${it[0]}${it[1]?`<span class="sub">${it[1]}</span>`:''}</span>
+    </label></li>`;
+  });
+  s.innerHTML=`<div class="sec-head" onclick="this.parentNode.classList.toggle('collapsed');save()">
+      <h2>${sec.t}</h2><span class="cnt" id="cnt${si}"></span></div>
+    ${sec.n?`<div class="note">💡 ${sec.n}</div>`:''}<ul>${lis}</ul>`;
+  app.appendChild(s);
+});
+document.getElementById('allN').textContent=total;
+
+app.addEventListener('change',e=>{
+  if(e.target.type!=='checkbox')return;
+  localStorage.setItem(e.target.dataset.k, e.target.checked?'1':'0');
+  e.target.closest('li').classList.toggle('done', e.target.checked);
+  refresh();
+});
+function refresh(){
+  let done=0;
+  DATA.forEach((sec,si)=>{
+    let d=0;
+    sec.items.forEach((_,ii)=>{ if(localStorage.getItem('s'+si+'i'+ii)==='1'){d++;done++;} });
+    document.getElementById('cnt'+si).textContent=d+'/'+sec.items.length;
+  });
+  document.getElementById('doneN').textContent=done;
+  document.getElementById('totalBar').style.width=(done/total*100)+'%';
+}
+function toggleAll(){
+  const secs=[...document.querySelectorAll('section')];
+  const anyOpen=secs.some(s=>!s.classList.contains('collapsed'));
+  secs.forEach(s=>s.classList.toggle('collapsed',anyOpen));
+}
+function save(){}
+refresh();
+</script>
+</body>
+</html>
