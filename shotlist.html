@@ -39,6 +39,11 @@
   .tAce{background:var(--ace);} .tFlow{background:var(--flow);}
   .tGo{background:var(--go);} .tHand{background:var(--hand);}
   .collapsed ul,.collapsed .note{display:none;}
+  .tabs{display:flex; gap:6px; overflow-x:auto; margin-top:10px; padding-bottom:2px; scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .chip{flex:none; font-size:13px; padding:5px 12px; border-radius:14px;
+    border:1px solid var(--line); background:var(--card); color:var(--dim); cursor:pointer;}
+  .chip.on{background:var(--accent); color:#111; font-weight:600; border-color:var(--accent);}
   footer{position:fixed; bottom:0; left:0; right:0; display:flex; gap:10px;
     padding:10px 12px calc(10px + env(safe-area-inset-bottom));
     background:rgba(17,19,24,.96); border-top:1px solid var(--line);}
@@ -51,6 +56,7 @@
   <h1>🎬 富搖拍攝清單 2026</h1>
   <div class="total"><span id="doneN">0</span> / <span id="allN">0</span> 顆完成</div>
   <div class="bar"><i id="totalBar"></i></div>
+  <div class="tabs" id="tabs"></div>
 </header>
 
 <div id="app"></div>
@@ -182,6 +188,7 @@ const DATA=[
 ];
 
 const app=document.getElementById('app');
+const NAMES=["✈️行前","🛬機場","23四","24五","25六","26日","27一","📸照片","⚡隨時"];
 let total=0;
 DATA.forEach((sec,si)=>{
   const s=document.createElement('section'); s.id='sec'+si;
@@ -194,18 +201,63 @@ DATA.forEach((sec,si)=>{
       <span class="txt">${it[0]}${it[1]?`<span class="sub">${it[1]}</span>`:''}</span>
     </label></li>`;
   });
-  s.innerHTML=`<div class="sec-head" onclick="this.parentNode.classList.toggle('collapsed');save()">
+  s.innerHTML=`<div class="sec-head" onclick="this.parentNode.classList.toggle('collapsed')">
       <h2>${sec.t}</h2><span class="cnt" id="cnt${si}"></span></div>
     ${sec.n?`<div class="note">💡 ${sec.n}</div>`:''}<ul>${lis}</ul>`;
   app.appendChild(s);
 });
 document.getElementById('allN').textContent=total;
 
+// tabs
+const tabsEl=document.getElementById('tabs');
+let active=dateDefault();
+function dateDefault(){
+  const d=new Date(), m=d.getMonth()+1, day=d.getDate();
+  if(m===7){ if(day>=23&&day<=27) return day-21; if(day>=15&&day<=22) return 0; }
+  return -1; // 全部
+}
+function buildTabs(){
+  tabsEl.innerHTML='';
+  const mk=(label,i)=>{
+    const c=document.createElement('div');
+    c.className='chip'+(active===i?' on':''); c.textContent=label;
+    c.onclick=()=>{active=i; applyTab(); buildTabs();};
+    tabsEl.appendChild(c);
+  };
+  mk('全部',-1); NAMES.forEach((n,i)=>mk(n,i));
+}
+function applyTab(){
+  [...document.querySelectorAll('section')].forEach((sec,si)=>{
+    sec.style.display=(active<0||si===active)?'':'none';
+    if(si===active) sec.classList.remove('collapsed');
+  });
+  window.scrollTo(0,0);
+}
+buildTabs(); applyTab();
+
 app.addEventListener('change',e=>{
   if(e.target.type!=='checkbox')return;
   localStorage.setItem(e.target.dataset.k, e.target.checked?'1':'0');
   e.target.closest('li').classList.toggle('done', e.target.checked);
   refresh();
+});
+function refresh(){
+  let done=0;
+  DATA.forEach((sec,si)=>{
+    let d=0;
+    sec.items.forEach((_,ii)=>{ if(localStorage.getItem('s'+si+'i'+ii)==='1'){d++;done++;} });
+    document.getElementById('cnt'+si).textContent=d+'/'+sec.items.length;
+  });
+  document.getElementById('doneN').textContent=done;
+  document.getElementById('totalBar').style.width=(done/total*100)+'%';
+}
+function toggleAll(){
+  const secs=[...document.querySelectorAll('section')];
+  const anyOpen=secs.some(s=>!s.classList.contains('collapsed'));
+  secs.forEach(s=>s.classList.toggle('collapsed',anyOpen));
+}
+function save(){}
+refresh();
 });
 function refresh(){
   let done=0;
